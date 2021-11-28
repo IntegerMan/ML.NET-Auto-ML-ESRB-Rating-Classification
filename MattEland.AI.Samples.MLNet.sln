@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31912.275
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MattEland.AI.Samples.MLNet", "MattEland.AI.Samples.MLNet\MattEland.AI.Samples.MLNet.csproj", "{9E7482DA-52F9-4C0E-9E23-42A989444FA9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9E7482DA-52F9-4C0E-9E23-42A989444FA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E7482DA-52F9-4C0E-9E23-42A989444FA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E7482DA-52F9-4C0E-9E23-42A989444FA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E7482DA-52F9-4C0E-9E23-42A989444FA9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B2587B6A-0267-402B-9A75-5AECA21478BD}
+	EndGlobalSection
+EndGlobal
