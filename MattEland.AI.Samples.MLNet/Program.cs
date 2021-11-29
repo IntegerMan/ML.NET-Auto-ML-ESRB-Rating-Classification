@@ -8,7 +8,7 @@ MLContext mlContext = new MLContext();
 
 IDataView trainDataView = mlContext.Data.LoadFromTextFile<GameRating>("ESRB.csv", hasHeader: true, separatorChar: ',');
 
-const int MAX_MINUTES = 5;
+const int MAX_MINUTES = 60;
 
 var experimentSettings = new BinaryExperimentSettings()
 {
@@ -26,18 +26,16 @@ var result = experiment.Execute(trainDataView,
 var bestRun = result.BestRun;
 
 Console.WriteLine($"Best Run: {bestRun.TrainerName} ({bestRun.RuntimeInSeconds} seconds)");
-bestRun.ValidationMetrics.LogClassificationMetrics();
-
-// TODO: Print a confusion matrix here
+ModelMetricsHelper.LogClassificationMetrics(bestRun.ValidationMetrics);
 
 try
 {
-    mlContext.Model.Save(bestRun.Model, trainDataView.Schema, Path.Combine(Environment.CurrentDirectory, "Model"));
+    mlContext.Model.Save(bestRun.Model, trainDataView.Schema, Path.Combine(Environment.CurrentDirectory, "Model.zip"));
     Console.WriteLine("Model Saved");
 }
-catch (Exception ex)
+catch (IOException ex)
 {
-    Console.WriteLine(ex.ToString());
+    Console.WriteLine($"Could not save model: {ex.Message}");
 }
 
 var engine = mlContext.Model.CreatePredictionEngine<GameRating, BloodPrediction>(bestRun.Model);
