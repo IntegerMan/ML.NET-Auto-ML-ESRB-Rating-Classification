@@ -20,8 +20,7 @@ namespace MattEland.AI.Samples.MLNet
                     MildLanguage = true,
                     CrudeHumor = true,
                     Violence = true,
-                    MildSuggestiveThemes = true,
-                    ESRBRating = "T"
+                    MildSuggestiveThemes = true
                 };
                 yield return new GameRating()
                 {
@@ -29,20 +28,31 @@ namespace MattEland.AI.Samples.MLNet
                     BloodAndGore = true,
                     DrugReference = true,
                     PartialNudity = true,
-                    ESRBRating = "M"
                 };
                 yield return new GameRating()
                 {
                     Title = "Assistant to the Lawn Service Manager 2022",
-                    CrudeHumor = true,
                     MildLanguage = true,
-                    ESRBRating = "E"
+                    CrudeHumor = true,
+                    AlcoholReference = true,
+                };
+                yield return new GameRating()
+                {
+                    Title = "Kinda Sus",
+                    MildCartoonViolence = true
+                };
+                yield return new GameRating()
+                {
+                    Title = "The Earthlings are Coming",
+                    MildViolence = true,
+                    MildFantasyViolence = true,                    
                 };
                 yield return new GameRating()
                 {
                     Title = "Intense Shoot-o-rama: Why would anyone play this edition",
                     BloodAndGore = true,
                     DrugReference = true,
+                    AlcoholReference = true,
                     PartialNudity = true,
                     StrongLanguage = true,
                     SexualContent = true,
@@ -51,7 +61,7 @@ namespace MattEland.AI.Samples.MLNet
                     Lyrics = true,
                     IntenseViolence = true,
                     CrudeHumor = true,
-                    ESRBRating = "M"
+                    Blood = true,
                 };
             }
         }
