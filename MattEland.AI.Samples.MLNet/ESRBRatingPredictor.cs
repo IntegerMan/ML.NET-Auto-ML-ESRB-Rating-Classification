@@ -1,5 +1,6 @@
 ﻿using Microsoft.ML;
 using Microsoft.ML.AutoML;
+using Microsoft.ML.Data;
 
 public class ESRBRatingPredictor
 {
@@ -8,11 +9,11 @@ public class ESRBRatingPredictor
     private ITransformer? _model;
     private DataViewSchema? _schema;
 
-    public string TrainModel(string trainFilePath, string testFilePath, uint minutesToTrain)
+    public string TrainModel(string trainFilePath, string validationFilePath, uint minutesToTrain)
     {
         // Load data. This was built around the Kaggle dataset at https://www.kaggle.com/imohtn/video-games-rating-by-esrb
         IDataView trainData = _context.Data.LoadFromTextFile<GameRating>(trainFilePath, separatorChar: ',', hasHeader: true, allowQuoting: true);
-        IDataView testData = _context.Data.LoadFromTextFile<GameRating>(testFilePath, separatorChar: ',', hasHeader: true, allowQuoting: true);
+        IDataView validationData = _context.Data.LoadFromTextFile<GameRating>(validationFilePath, separatorChar: ',', hasHeader: true, allowQuoting: true);
 
         // Configure the experiment
         MulticlassExperimentSettings settings = new MulticlassExperimentSettings()
@@ -24,10 +25,10 @@ public class ESRBRatingPredictor
 
         MulticlassClassificationExperiment experiment = _context.Auto().CreateMulticlassClassificationExperiment(settings);
 
-        // Actually Train the dataset
-        ExperimentResult<Microsoft.ML.Data.MulticlassClassificationMetrics> result = 
+        // Actually Train the model
+        ExperimentResult<MulticlassClassificationMetrics> result = 
             experiment.Execute(trainData: trainData, 
-                               validationData: testData, 
+                               validationData: validationData, 
                                labelColumnName: nameof(GameRating.ESRBRating), 
                                progressHandler: new MulticlassProgressReporter());
 

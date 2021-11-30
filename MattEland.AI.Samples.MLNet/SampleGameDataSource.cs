@@ -15,12 +15,22 @@ namespace MattEland.AI.Samples.MLNet
                 yield return new GameRating()
                 {
                     Title = "Teen Side Scroller",
-                    AlcoholReference = true,
                     CartoonViolence = true,
                     MildLanguage = true,
                     CrudeHumor = true,
                     Violence = true,
                     MildSuggestiveThemes = true
+                };
+                yield return new GameRating()
+                {
+                    Title = "Kinda Sus",
+                    MildCartoonViolence = true
+                };
+                yield return new GameRating()
+                {
+                    Title = "The Earthlings are Coming",
+                    MildViolence = true,
+                    MildFantasyViolence = true,
                 };
                 yield return new GameRating()
                 {
@@ -38,30 +48,17 @@ namespace MattEland.AI.Samples.MLNet
                 };
                 yield return new GameRating()
                 {
-                    Title = "Kinda Sus",
-                    MildCartoonViolence = true
-                };
-                yield return new GameRating()
-                {
-                    Title = "The Earthlings are Coming",
-                    MildViolence = true,
-                    MildFantasyViolence = true,                    
-                };
-                yield return new GameRating()
-                {
                     Title = "Intense Shoot-o-rama: Why would anyone play this edition",
                     BloodAndGore = true,
                     DrugReference = true,
                     AlcoholReference = true,
-                    PartialNudity = true,
+                    Nudity = true,
                     StrongLanguage = true,
                     SexualContent = true,
                     SexualThemes = true,
                     MatureHumor = true,
-                    Lyrics = true,
                     IntenseViolence = true,
                     CrudeHumor = true,
-                    Blood = true,
                 };
             }
         }
