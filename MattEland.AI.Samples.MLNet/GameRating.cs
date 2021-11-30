@@ -3,7 +3,7 @@
 public class GameRating
 {
     [LoadColumn(0)]
-    public string Title { get; set; }
+    public string? Title { get; set; }
 
     [LoadColumn(1)]
     public bool Console { get; set; }
@@ -102,5 +102,5 @@ public class GameRating
     public bool Violence { get; set; }
 
     [LoadColumn(33)]
-    public string ESRBRating { get; set; }
+    public string? ESRBRating { get; set; }
 }

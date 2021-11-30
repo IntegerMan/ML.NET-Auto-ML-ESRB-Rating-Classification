@@ -1,5 +1,6 @@
 ﻿using Microsoft.ML.Data;
 
+[Serializable]
 public class ESRBPrediction
 {
     [ColumnName("PredictedLabel")]

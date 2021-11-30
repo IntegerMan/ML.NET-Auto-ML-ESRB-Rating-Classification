@@ -8,10 +8,13 @@ public class ESRBRatingPredictor
     private ITransformer? _model;
     private DataViewSchema? _schema;
 
-    public string TrainModel(string filepath, uint minutesToTrain)
+    public string TrainModel(string trainFilePath, string testFilePath, uint minutesToTrain)
     {
-        IDataView data = _context.Data.LoadFromTextFile<GameRating>(filepath, separatorChar: ',', hasHeader: true, allowQuoting: true, trimWhitespace: true);
+        // Load data. This was built around the Kaggle dataset at https://www.kaggle.com/imohtn/video-games-rating-by-esrb
+        IDataView trainData = _context.Data.LoadFromTextFile<GameRating>(trainFilePath, separatorChar: ',', hasHeader: true, allowQuoting: true);
+        IDataView testData = _context.Data.LoadFromTextFile<GameRating>(testFilePath, separatorChar: ',', hasHeader: true, allowQuoting: true);
 
+        // Configure the experiment
         MulticlassExperimentSettings settings = new MulticlassExperimentSettings()
         {
             OptimizingMetric = MulticlassClassificationMetric.LogLoss,
@@ -21,14 +24,20 @@ public class ESRBRatingPredictor
 
         MulticlassClassificationExperiment experiment = _context.Auto().CreateMulticlassClassificationExperiment(settings);
 
+        // Actually Train the dataset
         ExperimentResult<Microsoft.ML.Data.MulticlassClassificationMetrics> result = 
-            experiment.Execute(trainData: data, labelColumnName: nameof(GameRating.ESRBRating), progressHandler: new MulticlassProgressReporter());
+            experiment.Execute(trainData: trainData, 
+                               validationData: testData, 
+                               labelColumnName: nameof(GameRating.ESRBRating), 
+                               progressHandler: new MulticlassProgressReporter());
 
+        // Process our finished result
         _model = result.BestRun.Model;
-        _schema = data.Schema;
+        _schema = trainData.Schema;
 
         Console.WriteLine($"Best algorithm: {result.BestRun.TrainerName}");
 
+        // Return a formatted matrix tor analyzing model performance
         return result.BestRun.ValidationMetrics.ConfusionMatrix.GetFormattedConfusionTable();
     }
 
@@ -36,11 +45,12 @@ public class ESRBRatingPredictor
     {
         if (_model == null) throw new InvalidOperationException("You must train or load a model before predicting ESRB ratings");
 
-        var predictEngine = _context.Model.CreatePredictionEngine<GameRating, ESRBPrediction>(transformer: _model, inputSchema: _schema);
+        PredictionEngine<GameRating, ESRBPrediction> predictEngine = 
+            _context.Model.CreatePredictionEngine<GameRating, ESRBPrediction>(transformer: _model, inputSchema: _schema);
 
         foreach (GameRating game in games)
         {
-            var prediction = predictEngine.Predict(game);
+            ESRBPrediction prediction = predictEngine.Predict(game);
 
             Console.WriteLine($"Predicting rating of {prediction.ESRBRating} for \"{game.Title}\" with a confidence score of {prediction.Score.Max():p}");
         }

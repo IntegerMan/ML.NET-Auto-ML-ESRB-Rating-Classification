@@ -115,7 +115,7 @@ public static class Program
         Console.WriteLine($"Training model now.... This will take around {minutesText}");
         Console.WriteLine();
 
-        string confusionMatrix = predictor.TrainModel("ESRB.csv", (uint)minutesToTrain);
+        string confusionMatrix = predictor.TrainModel("ESRB.csv", "ESRBTest.csv", (uint)minutesToTrain);
 
         Console.WriteLine();
         Console.WriteLine("Training completed!");
