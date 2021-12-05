@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MattEland.AI.Samples.MLNet", "MattEland.AI.Samples.MLNet\MattEland.AI.Samples.MLNet.csproj", "{9E7482DA-52F9-4C0E-9E23-42A989444FA9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MattEland.AI.MLNet.ESRBPredictor", "MattEland.AI.Samples.MLNet\MattEland.AI.MLNet.ESRBPredictor.csproj", "{9E7482DA-52F9-4C0E-9E23-42A989444FA9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

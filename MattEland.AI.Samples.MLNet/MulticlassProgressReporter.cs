@@ -1,19 +1,22 @@
 ﻿using Microsoft.ML.AutoML;
 using Microsoft.ML.Data;
 
-public class MulticlassProgressReporter : IProgress<RunDetail<MulticlassClassificationMetrics>>
+namespace MattEland.AI.MLNet.ESRBPredictor
 {
-    public void Report(RunDetail<MulticlassClassificationMetrics> value)
+    public class MulticlassProgressReporter : IProgress<RunDetail<MulticlassClassificationMetrics>>
     {
-        if (value.ValidationMetrics != null)
+        public void Report(RunDetail<MulticlassClassificationMetrics> value)
         {
-            double accuracy = value.ValidationMetrics.MacroAccuracy;
+            if (value.ValidationMetrics != null)
+            {
+                double accuracy = value.ValidationMetrics.MacroAccuracy;
 
-            Console.WriteLine($"{value.TrainerName} ran in {value.RuntimeInSeconds:0.00} seconds with accuracy of {accuracy:p}");
-        } 
-        else
-        {
-            Console.WriteLine($"{value.TrainerName} ran in {value.RuntimeInSeconds:0.00} seconds but did not complete. Time likely expired.");
+                Console.WriteLine($"{value.TrainerName} ran in {value.RuntimeInSeconds:0.00} seconds with accuracy of {accuracy:p}");
+            }
+            else
+            {
+                Console.WriteLine($"{value.TrainerName} ran in {value.RuntimeInSeconds:0.00} seconds but did not complete. Time likely expired.");
+            }
         }
     }
 }

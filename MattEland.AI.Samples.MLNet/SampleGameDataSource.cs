@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MattEland.AI.Samples.MLNet
+namespace MattEland.AI.MLNet.ESRBPredictor
 {
     public static class SampleGameDataSource
     {

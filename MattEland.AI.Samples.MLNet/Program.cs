@@ -1,125 +1,129 @@
-﻿using MattEland.AI.Samples.MLNet;
-
-public static class Program
+﻿namespace MattEland.AI.MLNet.ESRBPredictor
 {
-    public static void Main()
+    public static class Program
     {
-        ESRBRatingPredictor predictor = new ESRBRatingPredictor();
-        string modelFile = Path.Combine(Environment.CurrentDirectory, "Model.zip");
-
-        bool shouldQuit = false;
-
-        Console.WriteLine("Welcome to the ESRB Predictor by Matt Eland (@IntegerMan)");
-
-        do
+        public static void Main()
         {
-            Console.WriteLine();
-            Console.WriteLine("What would you like to do?");
-            Console.WriteLine();
-            Console.WriteLine("(T)rain a model");
-            Console.WriteLine("(S)ave the model to disk");
-            Console.WriteLine("(L)oad the last saved model from disk");
-            Console.WriteLine("(P)redict ESRB ratings");
-            Console.WriteLine("(Q)uit");
-            Console.WriteLine();
+            ESRBRatingPredictor predictor = new ESRBRatingPredictor();
+            string modelFile = Path.Combine(Environment.CurrentDirectory, "Model.zip");
 
-            Console.Write("> ");
-            string? input = Console.ReadLine();
-            Console.WriteLine();
+            bool shouldQuit = false;
 
+            Console.WriteLine("Welcome to the ESRB Predictor by Matt Eland (@IntegerMan)");
+
+            do
+            {
+                Console.WriteLine();
+                Console.WriteLine("What would you like to do?");
+                Console.WriteLine();
+                Console.WriteLine("(T)rain a model");
+                Console.WriteLine("(S)ave the model to disk");
+                Console.WriteLine("(L)oad the last saved model from disk");
+                Console.WriteLine("(P)redict ESRB ratings");
+                Console.WriteLine("(Q)uit");
+                Console.WriteLine();
+
+                Console.Write("> ");
+                string? input = Console.ReadLine();
+                Console.WriteLine();
+
+                try
+                {
+                    switch (input?.ToUpperInvariant())
+                    {
+                        case "T": // Train a model
+                            HandleTrainModel(predictor);
+                            break;
+
+                        case "S": // Save a model
+                            HandleSaveModel(predictor, modelFile);
+                            break;
+
+                        case "L": // Load a saved model
+                            HandleLoadModel(predictor, modelFile);
+                            break;
+
+                        case "P": // Predict ESRB ratings
+                            IEnumerable<GameRating> games = SampleGameDataSource.SampleGames;
+                            foreach ((ESRBPrediction prediction, GameRating game) in predictor.ClassifyGames(games))
+                            {
+                                Console.WriteLine($"Predicting rating of {prediction.ESRBRating} for \"{game.Title}\" with a confidence score of {prediction.Confidence:p}");
+                            }
+                            break;
+
+                        case "Q": // Quit
+                            shouldQuit = true;
+                            Console.WriteLine("Thanks for using the classifier!");
+                            break;
+
+                        default:
+                            Console.WriteLine("Invalid input. Please type T, S, L, P, or Q");
+                            break;
+                    }
+                }
+                catch (InvalidOperationException ex)
+                {
+                    Console.WriteLine(ex.Message); // These are built in such a way that they should be human-readable
+                }
+            } while (!shouldQuit);
+
+        }
+
+        private static void HandleSaveModel(ESRBRatingPredictor predictor, string modelFile)
+        {
             try
             {
-                switch (input?.ToUpperInvariant())
-                {
-                    case "T": // Train a model
-                        HandleTrainModel(predictor);
-                        break;
-
-                    case "S": // Save a model
-                        HandleSaveModel(predictor, modelFile);
-                        break;
-
-                    case "L": // Load a saved model
-                        HandleLoadModel(predictor, modelFile);
-                        break;
-
-                    case "P": // Predict ESRB ratings
-                        IEnumerable<GameRating> games = SampleGameDataSource.SampleGames;
-                        predictor.ClassifyGames(games);
-                        break;
-
-                    case "Q": // Quit
-                        shouldQuit = true;
-                        Console.WriteLine("Thanks for using the classifier!");
-                        break;
-
-                    default:
-                        Console.WriteLine("Invalid input. Please type T, S, L, P, or Q");
-                        break;
-                }
+                predictor.SaveModel(modelFile);
+                Console.WriteLine("Model saved.");
             }
-            catch (InvalidOperationException ex)
+            catch (IOException ex)
             {
-                Console.WriteLine(ex.Message); // These are built in such a way that they should be human-readable
+                Console.WriteLine($"Could not save the model to {modelFile}: {ex.Message}");
             }
-        } while (!shouldQuit);
-
-    }
-
-    private static void HandleSaveModel(ESRBRatingPredictor predictor, string modelFile)
-    {
-        try
-        {
-            predictor.SaveModel(modelFile);
-            Console.WriteLine("Model saved.");
-        }
-        catch (IOException ex)
-        {
-            Console.WriteLine($"Could not save the model to {modelFile}: {ex.Message}");
-        }
-    }
-
-    private static void HandleLoadModel(ESRBRatingPredictor predictor, string modelFile)
-    {
-        try
-        {
-            predictor.LoadModel(modelFile);
-            Console.WriteLine("Model loaded.");
-        }
-        catch (IOException ex)
-        {
-            Console.WriteLine($"Could not load the model from {modelFile}: {ex.Message}");
-        }
-    }
-
-    private static void HandleTrainModel(ESRBRatingPredictor predictor)
-    {
-        Console.WriteLine("How many minutes do you want to train?");
-        string? minutesStr = Console.ReadLine();
-        Console.WriteLine();
-
-        if (!int.TryParse(minutesStr, out int minutesToTrain))
-        {
-            Console.WriteLine("Invalid minute input. Expecting a positive whole number.");
-            return;
         }
 
-        if (minutesToTrain <= 0)
+        private static void HandleLoadModel(ESRBRatingPredictor predictor, string modelFile)
         {
-            Console.WriteLine("You must train for at least one minute");
-            return;
+            try
+            {
+                predictor.LoadModel(modelFile);
+                Console.WriteLine("Model loaded.");
+            }
+            catch (IOException ex)
+            {
+                Console.WriteLine($"Could not load the model from {modelFile}: {ex.Message}");
+            }
         }
 
-        string minutesText = minutesToTrain == 1 ? "1 minute" : minutesToTrain + " minutes";
+        private static void HandleTrainModel(ESRBRatingPredictor predictor)
+        {
+            Console.WriteLine("How many seconds do you want to train? (10 Recommended)");
+            string? minutesStr = Console.ReadLine();
+            Console.WriteLine();
 
-        Console.WriteLine($"Training model now.... This will take around {minutesText}");
-        Console.WriteLine();
+            if (!int.TryParse(minutesStr, out int secondsToTrain))
+            {
+                Console.WriteLine("Invalid minute input. Expecting a positive whole number.");
+                return;
+            }
 
-        string confusionMatrix = predictor.TrainModel("ESRB.csv", "ESRBTest.csv", (uint)minutesToTrain);
+            if (secondsToTrain <= 0)
+            {
+                Console.WriteLine("You must train for at least one second");
+                return;
+            }
 
-        Console.WriteLine();
-        Console.WriteLine("Training completed!");
-        Console.WriteLine();
-        Console.WriteLine(confusionMatrix);
+            string timeText = secondsToTrain == 1 ? "1 second" : secondsToTrain + " seconds";
+
+            Console.WriteLine($"Training model now.... This will take around {timeText}");
+            Console.WriteLine();
+
+            string confusionMatrix = predictor.TrainModel("ESRB.csv", "ESRBTest.csv", (uint)secondsToTrain);
+
+            Console.WriteLine();
+            Console.WriteLine("Training completed!");
+            Console.WriteLine();
+            Console.WriteLine(confusionMatrix);
+        }
     }
 }
