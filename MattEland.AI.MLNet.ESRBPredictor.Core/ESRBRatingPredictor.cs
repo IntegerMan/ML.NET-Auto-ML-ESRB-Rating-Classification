@@ -18,7 +18,7 @@ namespace MattEland.AI.MLNet.ESRBPredictor.Core
 
         /// <summary>
         /// Trains a machine learning model based on ESRB game data in the <paramref name="trainFilePath"/> and <paramref name="validationFilePath"/>.
-        /// Once a model is trained, the <see cref="ClassifyGames(IEnumerable{GameRating})">ClassifyGames</see> method can be called to
+        /// Once a model is trained, the <see cref="ClassifyGames(IEnumerable{GameInfo})">ClassifyGames</see> method can be called to
         /// predict ESRB ratings, or the <see cref="SaveModel(string)">SaveModel</see> method can be called to save the model for future runs.
         ///
         /// See <see href="https://www.kaggle.com/imohtn/video-games-rating-by-esrb">Kaggle</see> for the dataset used for this application.
@@ -32,8 +32,8 @@ namespace MattEland.AI.MLNet.ESRBPredictor.Core
         public string TrainModel(string trainFilePath, string validationFilePath, uint secondsToTrain)
         {
             // Load data. This was built around the Kaggle dataset at https://www.kaggle.com/imohtn/video-games-rating-by-esrb
-            IDataView trainData = _context.Data.LoadFromTextFile<GameRating>(trainFilePath, separatorChar: ',', hasHeader: true, allowQuoting: true);
-            IDataView validationData = _context.Data.LoadFromTextFile<GameRating>(validationFilePath, separatorChar: ',', hasHeader: true, allowQuoting: true);
+            IDataView trainData = _context.Data.LoadFromTextFile<GameInfo>(trainFilePath, separatorChar: ',', hasHeader: true, allowQuoting: true);
+            IDataView validationData = _context.Data.LoadFromTextFile<GameInfo>(validationFilePath, separatorChar: ',', hasHeader: true, allowQuoting: true);
 
             // Configure the experiment
             MulticlassExperimentSettings settings = new MulticlassExperimentSettings()
@@ -49,7 +49,7 @@ namespace MattEland.AI.MLNet.ESRBPredictor.Core
             ExperimentResult<MulticlassClassificationMetrics> result =
                 experiment.Execute(trainData: trainData,
                                    validationData: validationData,
-                                   labelColumnName: nameof(GameRating.ESRBRating),
+                                   labelColumnName: nameof(GameInfo.ESRBRating),
                                    progressHandler: new MulticlassConsoleProgressReporter());
 
             // Process our finished result
@@ -72,14 +72,14 @@ namespace MattEland.AI.MLNet.ESRBPredictor.Core
         /// <exception cref="InvalidOperationException">
         /// Thrown if no model has been trained. Call <see cref="TrainModel(string, string, uint)"/> or <see cref="LoadModel(string)"/> first.
         /// </exception>
-        public IEnumerable<GameClassificationResult> ClassifyGames(IEnumerable<GameRating> games)
+        public IEnumerable<GameClassificationResult> ClassifyGames(IEnumerable<GameInfo> games)
         {
             if (_model == null) throw new InvalidOperationException("You must train or load a model before predicting ESRB ratings");
 
-            PredictionEngine<GameRating, ESRBPrediction> predictEngine =
-                _context.Model.CreatePredictionEngine<GameRating, ESRBPrediction>(transformer: _model, inputSchema: _schema);
+            PredictionEngine<GameInfo, ESRBPrediction> predictEngine =
+                _context.Model.CreatePredictionEngine<GameInfo, ESRBPrediction>(transformer: _model, inputSchema: _schema);
 
-            foreach (GameRating game in games)
+            foreach (GameInfo game in games)
             {
                 ESRBPrediction prediction = predictEngine.Predict(game);
 
@@ -95,12 +95,12 @@ namespace MattEland.AI.MLNet.ESRBPredictor.Core
         /// <exception cref="InvalidOperationException">
         /// Thrown if no model has been trained. Call <see cref="TrainModel(string, string, uint)"/> or <see cref="LoadModel(string)"/> first.
         /// </exception>
-        public GameClassificationResult ClassifyGame(GameRating game)
+        public GameClassificationResult ClassifyGame(GameInfo game)
         {
             if (_model == null) throw new InvalidOperationException("You must train or load a model before predicting ESRB ratings");
 
-            PredictionEngine<GameRating, ESRBPrediction> predictEngine =
-                _context.Model.CreatePredictionEngine<GameRating, ESRBPrediction>(transformer: _model, inputSchema: _schema);
+            PredictionEngine<GameInfo, ESRBPrediction> predictEngine =
+                _context.Model.CreatePredictionEngine<GameInfo, ESRBPrediction>(transformer: _model, inputSchema: _schema);
 
             ESRBPrediction prediction = predictEngine.Predict(game);
 

@@ -46,7 +46,7 @@ namespace MattEland.AI.MLNet.ESRBPredictor.ConsoleApp
                             break;
 
                         case "P": // Predict ESRB ratings
-                            IEnumerable<GameRating> games = SampleGameDataSource.SampleGames;
+                            IEnumerable<GameInfo> games = SampleGameDataSource.SampleGames;
                             foreach (GameClassificationResult result in predictor.ClassifyGames(games))
                             {
                                 string title = result.Game.Title;

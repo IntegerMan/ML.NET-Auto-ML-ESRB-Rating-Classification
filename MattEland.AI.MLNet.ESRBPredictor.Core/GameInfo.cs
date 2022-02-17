@@ -2,7 +2,7 @@
 
 namespace MattEland.AI.MLNet.ESRBPredictor.Core
 {
-    public class GameRating
+    public class GameInfo
     {
         [LoadColumn(0)]
         public string Title { get; set; }

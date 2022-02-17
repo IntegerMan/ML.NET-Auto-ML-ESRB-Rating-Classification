@@ -8,13 +8,13 @@ namespace MattEland.AI.MLNet.ESRBPredictor.Core
 {
     public class GameClassificationResult
     {
-        public GameClassificationResult(ESRBPrediction prediction, GameRating game)
+        public GameClassificationResult(ESRBPrediction prediction, GameInfo game)
         {
             Prediction = prediction;
             Game = game;
         }
 
         public ESRBPrediction Prediction { get; }
-        public GameRating Game { get; }
+        public GameInfo Game { get; }
     }
 }
