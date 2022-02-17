@@ -1,9 +1,9 @@
-﻿using Microsoft.ML;
+﻿using System.Text;
+using Microsoft.ML;
 using Microsoft.ML.AutoML;
 using Microsoft.ML.Data;
-using System.Text;
 
-namespace MattEland.AI.MLNet.ESRBPredictor 
+namespace MattEland.AI.MLNet.ESRBPredictor.Core 
 {
 
     /// <summary>
@@ -17,17 +17,13 @@ namespace MattEland.AI.MLNet.ESRBPredictor
         private DataViewSchema? _schema;
 
         /// <summary>
-        /// <para>
         /// Trains a machine learning model based on ESRB game data in the <paramref name="trainFilePath"/> and <paramref name="validationFilePath"/>.
         /// Once a model is trained, the <see cref="ClassifyGames(IEnumerable{GameRating})">ClassifyGames</see> method can be called to
         /// predict ESRB ratings, or the <see cref="SaveModel(string)">SaveModel</see> method can be called to save the model for future runs.
-        /// </para>
-        /// <para>
+        ///
         /// See <see href="https://www.kaggle.com/imohtn/video-games-rating-by-esrb">Kaggle</see> for the dataset used for this application.
-        /// </para>
-        /// <para>
+        /// 
         /// This method will return the name of the best model and a confusion matrix indicating the performance of that model.
-        /// </para>
         /// </summary>
         /// <param name="trainFilePath">The file containing the comma separated values for model training</param>
         /// <param name="validationFilePath">The file containing the comma separated values for model validation</param>
@@ -54,7 +50,7 @@ namespace MattEland.AI.MLNet.ESRBPredictor
                 experiment.Execute(trainData: trainData,
                                    validationData: validationData,
                                    labelColumnName: nameof(GameRating.ESRBRating),
-                                   progressHandler: new MulticlassProgressReporter());
+                                   progressHandler: new MulticlassConsoleProgressReporter());
 
             // Process our finished result
             _model = result.BestRun.Model;

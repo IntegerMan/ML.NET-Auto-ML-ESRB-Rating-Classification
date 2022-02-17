@@ -1,4 +1,6 @@
-﻿namespace MattEland.AI.MLNet.ESRBPredictor
+﻿using MattEland.AI.MLNet.ESRBPredictor.Core;
+
+namespace MattEland.AI.MLNet.ESRBPredictor.ConsoleApp
 {
     public static class Program
     {
@@ -24,7 +26,7 @@
                 Console.WriteLine();
 
                 Console.Write("> ");
-                string? input = Console.ReadLine();
+                string input = Console.ReadLine()!;
                 Console.WriteLine();
 
                 try

@@ -1,9 +1,9 @@
 ﻿using Microsoft.ML.AutoML;
 using Microsoft.ML.Data;
 
-namespace MattEland.AI.MLNet.ESRBPredictor
+namespace MattEland.AI.MLNet.ESRBPredictor.Core
 {
-    public class MulticlassProgressReporter : IProgress<RunDetail<MulticlassClassificationMetrics>>
+    public class MulticlassConsoleProgressReporter : IProgress<RunDetail<MulticlassClassificationMetrics>>
     {
         public void Report(RunDetail<MulticlassClassificationMetrics> value)
         {

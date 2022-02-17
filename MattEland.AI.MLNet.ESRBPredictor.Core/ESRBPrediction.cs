@@ -1,6 +1,6 @@
 ﻿using Microsoft.ML.Data;
 
-namespace MattEland.AI.MLNet.ESRBPredictor
+namespace MattEland.AI.MLNet.ESRBPredictor.Core
 {
     public class ESRBPrediction
     {

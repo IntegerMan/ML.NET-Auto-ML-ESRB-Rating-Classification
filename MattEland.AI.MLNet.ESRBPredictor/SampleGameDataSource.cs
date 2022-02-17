@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MattEland.AI.MLNet.ESRBPredictor.Core;
 
-namespace MattEland.AI.MLNet.ESRBPredictor
+namespace MattEland.AI.MLNet.ESRBPredictor.ConsoleApp
 {
     public static class SampleGameDataSource
     {
