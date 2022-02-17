@@ -24,14 +24,7 @@ app.UseHttpsRedirection();
 ESRBRatingPredictor predictor = new ESRBRatingPredictor();
 predictor.LoadModel("Model.zip");
 
-app.MapPost("/esrb-predictor", (GameRating game) =>
-    {
-        GameClassificationResult prediction = predictor.ClassifyGame(game);
-
-        return Results.Ok(prediction);
-    })
-.WithName("PredictESRBRating");
-
+app.MapPost("/esrb-predictor", (GameRating game) => Results.Ok(predictor.ClassifyGame(game)));
 
 // Start the Web Application
 app.Run();
