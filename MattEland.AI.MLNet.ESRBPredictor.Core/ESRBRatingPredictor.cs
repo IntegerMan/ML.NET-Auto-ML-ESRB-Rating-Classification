@@ -72,7 +72,7 @@ namespace MattEland.AI.MLNet.ESRBPredictor.Core
         /// <exception cref="InvalidOperationException">
         /// Thrown if no model has been trained. Call <see cref="TrainModel(string, string, uint)"/> or <see cref="LoadModel(string)"/> first.
         /// </exception>
-        public IEnumerable<Tuple<ESRBPrediction, GameRating>> ClassifyGames(IEnumerable<GameRating> games)
+        public IEnumerable<GameClassificationResult> ClassifyGames(IEnumerable<GameRating> games)
         {
             if (_model == null) throw new InvalidOperationException("You must train or load a model before predicting ESRB ratings");
 
@@ -83,8 +83,28 @@ namespace MattEland.AI.MLNet.ESRBPredictor.Core
             {
                 ESRBPrediction prediction = predictEngine.Predict(game);
 
-                yield return new (prediction, game);
+                yield return new GameClassificationResult(prediction, game);
             }
+        }
+
+        /// <summary>
+        /// Predicts the ESRB ratings of incoming <paramref name="games"/> and returns those predictions
+        /// </summary>
+        /// <param name="games">The games to classify</param>
+        /// <returns>A series of ESRB predictions including certainty factors</returns>
+        /// <exception cref="InvalidOperationException">
+        /// Thrown if no model has been trained. Call <see cref="TrainModel(string, string, uint)"/> or <see cref="LoadModel(string)"/> first.
+        /// </exception>
+        public GameClassificationResult ClassifyGame(GameRating game)
+        {
+            if (_model == null) throw new InvalidOperationException("You must train or load a model before predicting ESRB ratings");
+
+            PredictionEngine<GameRating, ESRBPrediction> predictEngine =
+                _context.Model.CreatePredictionEngine<GameRating, ESRBPrediction>(transformer: _model, inputSchema: _schema);
+
+            ESRBPrediction prediction = predictEngine.Predict(game);
+
+            return new GameClassificationResult(prediction, game);
         }
 
         /// <summary>

@@ -47,9 +47,13 @@ namespace MattEland.AI.MLNet.ESRBPredictor.ConsoleApp
 
                         case "P": // Predict ESRB ratings
                             IEnumerable<GameRating> games = SampleGameDataSource.SampleGames;
-                            foreach ((ESRBPrediction prediction, GameRating game) in predictor.ClassifyGames(games))
+                            foreach (GameClassificationResult result in predictor.ClassifyGames(games))
                             {
-                                Console.WriteLine($"Predicting rating of {prediction.ESRBRating} for \"{game.Title}\" with a confidence score of {prediction.Confidence:p}");
+                                string title = result.Game.Title;
+                                string rating = result.Prediction.ESRBRating;
+                                float confidence = result.Prediction.Confidence;
+
+                                Console.WriteLine($"Predicting rating of {rating} for \"{title}\" with a confidence score of {confidence:p}");
                             }
                             break;
 

@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MattEland.AI.MLNet.ESRBPredictor.Core", "MattEland.AI.MLNet.ESRBPredictor.Core\MattEland.AI.MLNet.ESRBPredictor.Core.csproj", "{D43D6E84-9393-42EB-BD0C-E783F6950D9B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MattEland.AI.MLNet.ESRBPredictor.SampleAPI", "MattEland.AI.MLNet.ESRBPredictor.SampleAPI\MattEland.AI.MLNet.ESRBPredictor.SampleAPI.csproj", "{27B0FBE4-D9BD-4616-AB85-4B1DF2EC4B64}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,6 +28,10 @@ Global
 		{D43D6E84-9393-42EB-BD0C-E783F6950D9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D43D6E84-9393-42EB-BD0C-E783F6950D9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D43D6E84-9393-42EB-BD0C-E783F6950D9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27B0FBE4-D9BD-4616-AB85-4B1DF2EC4B64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27B0FBE4-D9BD-4616-AB85-4B1DF2EC4B64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27B0FBE4-D9BD-4616-AB85-4B1DF2EC4B64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27B0FBE4-D9BD-4616-AB85-4B1DF2EC4B64}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
