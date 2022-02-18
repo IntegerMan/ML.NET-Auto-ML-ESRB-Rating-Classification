@@ -1,4 +1,7 @@
-﻿using MattEland.AI.MLNet.ESRBPredictor.Core;
+﻿using System.Text;
+using MattEland.AI.MLNet.ESRBPredictor.Core;
+using Microsoft.ML.AutoML;
+using Microsoft.ML.Data;
 
 namespace MattEland.AI.MLNet.ESRBPredictor.ConsoleApp
 {
@@ -31,7 +34,7 @@ namespace MattEland.AI.MLNet.ESRBPredictor.ConsoleApp
 
                 try
                 {
-                    switch (input?.ToUpperInvariant())
+                    switch (input.ToUpperInvariant())
                     {
                         case "T": // Train a model
                             HandleTrainModel(predictor);
@@ -51,9 +54,10 @@ namespace MattEland.AI.MLNet.ESRBPredictor.ConsoleApp
                             {
                                 string title = result.Game.Title;
                                 string rating = result.Prediction.ESRBRating;
-                                float confidence = result.Prediction.Confidence;
-
-                                Console.WriteLine($"Predicting rating of {rating} for \"{title}\" with a confidence score of {confidence:p}");
+                                
+                                Console.WriteLine($"Predicting rating of {rating} for \"{title}\"");
+                                Console.WriteLine($"\tDetails: {result}");
+                                Console.WriteLine();
                             }
                             break;
 
@@ -75,12 +79,31 @@ namespace MattEland.AI.MLNet.ESRBPredictor.ConsoleApp
 
         }
 
+        private static void HandleTrainModel(ESRBRatingPredictor predictor)
+        {
+            uint secondsToTrain = PromptForSecondsToTrain();
+
+            Console.WriteLine($"Training model now.... This will take around {secondsToTrain} second(s)");
+            Console.WriteLine();
+
+            RunDetail<MulticlassClassificationMetrics> bestRun = 
+                predictor.TrainModel("ESRB.csv", "ESRBTest.csv", secondsToTrain);
+
+            Console.WriteLine();
+            Console.WriteLine("Training completed!");
+            Console.WriteLine();
+
+            Console.WriteLine($"Best algorithm: {bestRun.TrainerName}");
+            Console.WriteLine(bestRun.ValidationMetrics.ConfusionMatrix.GetFormattedConfusionTable());
+        }
+
         private static void HandleSaveModel(ESRBRatingPredictor predictor, string modelFile)
         {
             try
             {
                 predictor.SaveModel(modelFile);
-                Console.WriteLine("Model saved.");
+
+                Console.WriteLine($"Model saved to {modelFile}");
             }
             catch (IOException ex)
             {
@@ -93,7 +116,8 @@ namespace MattEland.AI.MLNet.ESRBPredictor.ConsoleApp
             try
             {
                 predictor.LoadModel(modelFile);
-                Console.WriteLine("Model loaded.");
+
+                Console.WriteLine($"Model loaded from {modelFile}");
             }
             catch (IOException ex)
             {
@@ -101,35 +125,38 @@ namespace MattEland.AI.MLNet.ESRBPredictor.ConsoleApp
             }
         }
 
-        private static void HandleTrainModel(ESRBRatingPredictor predictor)
+        private static uint PromptForSecondsToTrain()
         {
-            Console.WriteLine("How many seconds do you want to train? (10 Recommended)");
-            string? minutesStr = Console.ReadLine();
-            Console.WriteLine();
-
-            if (!int.TryParse(minutesStr, out int secondsToTrain))
+            // Loop until we get a valid input
+            while (true)
             {
-                Console.WriteLine("Invalid minute input. Expecting a positive whole number.");
-                return;
+                Console.WriteLine("How many seconds do you want to train? (10 Recommended)");
+                string minutesStr = Console.ReadLine()!;
+                Console.WriteLine();
+
+                // Default to 10 if the user just hits enter
+                if (string.IsNullOrWhiteSpace(minutesStr))
+                {
+                    minutesStr = "10";
+                    Console.WriteLine(minutesStr);
+                }
+
+                // Ensure the input is valid
+                if (int.TryParse(minutesStr, out int secondsToTrain))
+                {
+                    if (secondsToTrain > 0)
+                    {
+                        return (uint)secondsToTrain;
+                    }
+
+                    Console.WriteLine("You must train for at least one second");
+                }
+                else
+                {
+                    Console.WriteLine("Invalid minute input. Expecting a positive whole number.");
+                }
             }
-
-            if (secondsToTrain <= 0)
-            {
-                Console.WriteLine("You must train for at least one second");
-                return;
-            }
-
-            string timeText = secondsToTrain == 1 ? "1 second" : secondsToTrain + " seconds";
-
-            Console.WriteLine($"Training model now.... This will take around {timeText}");
-            Console.WriteLine();
-
-            string confusionMatrix = predictor.TrainModel("ESRB.csv", "ESRBTest.csv", (uint)secondsToTrain);
-
-            Console.WriteLine();
-            Console.WriteLine("Training completed!");
-            Console.WriteLine();
-            Console.WriteLine(confusionMatrix);
         }
+
     }
 }
