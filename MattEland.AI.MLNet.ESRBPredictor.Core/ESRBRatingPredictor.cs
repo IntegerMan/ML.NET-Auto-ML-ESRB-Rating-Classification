@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections.Immutable;
+using System.Text;
 using Microsoft.ML;
 using Microsoft.ML.AutoML;
 using Microsoft.ML.Data;
@@ -15,6 +16,7 @@ namespace MattEland.AI.MLNet.ESRBPredictor.Core
 
         private ITransformer? _model;
         private DataViewSchema? _schema;
+        private PredictionEngine<GameInfo, ESRBPrediction> _predictor;
 
         /// <summary>
         /// Trains a machine learning model based on ESRB game data in the <paramref name="trainFilePath"/> and <paramref name="validationFilePath"/>.
@@ -62,6 +64,32 @@ namespace MattEland.AI.MLNet.ESRBPredictor.Core
             _model = result.BestRun.Model;
             _schema = trainData.Schema;
 
+            // Whenever our model changes, it's nice to update the prediction engine
+            _predictor = _context.Model.CreatePredictionEngine<GameInfo, ESRBPrediction>(transformer: _model, inputSchema: _schema);
+
+            /* This code is the beginning of working with feature explainability, but is currently bugged for AutoML
+             * See https://github.com/dotnet/machinelearning/issues/6084 for bug details and current workaround status
+             * See https://docs.microsoft.com/en-us/dotnet/machine-learning/how-to-guides/explain-machine-learning-model-permutation-feature-importance-ml-net for more info on explainability
+
+            ImmutableDictionary<string, MulticlassClassificationMetricsStatistics>? permutationFeatureImportance =
+                _context
+                    .MulticlassClassification
+                    .PermutationFeatureImportance(_model, trainData, permutationCount: 3);
+
+            // The below is a draft that would work with regression, but needs to be adapted to multi-class classification
+
+            var featureImportanceMetrics = permutationFeatureImportance
+                        .Select((metric, index) => new { index, metric.RSquared })
+                        .OrderByDescending(myFeatures => Math.Abs(myFeatures.RSquared.Mean));
+
+                Console.WriteLine("Feature\tPFI");
+
+                foreach (var feature in featureImportanceMetrics)
+                {
+                    Console.WriteLine($"{featureColumnNames[feature.index],-20}|\t{feature.RSquared.Mean:F6}");
+                }
+            */
+
             // Return a formatted matrix tor analyzing model performance
             return result.BestRun;
         }
@@ -76,12 +104,9 @@ namespace MattEland.AI.MLNet.ESRBPredictor.Core
         /// </exception>
         public GameClassificationResult ClassifyGame(GameInfo game)
         {
-            if (_model == null) throw new InvalidOperationException("You must train or load a model before predicting ESRB ratings");
+            if (_predictor == null) throw new InvalidOperationException("You must train or load a model before predicting ESRB ratings");
 
-            PredictionEngine<GameInfo, ESRBPrediction> predictEngine =
-                _context.Model.CreatePredictionEngine<GameInfo, ESRBPrediction>(transformer: _model, inputSchema: _schema);
-
-            ESRBPrediction prediction = predictEngine.Predict(game);
+            ESRBPrediction prediction = _predictor.Predict(game);
 
             return new GameClassificationResult(prediction, game);
         }
@@ -96,14 +121,11 @@ namespace MattEland.AI.MLNet.ESRBPredictor.Core
         /// </exception>
         public IEnumerable<GameClassificationResult> ClassifyGames(IEnumerable<GameInfo> games)
         {
-            if (_model == null) throw new InvalidOperationException("You must train or load a model before predicting ESRB ratings");
-
-            PredictionEngine<GameInfo, ESRBPrediction> predictEngine =
-                _context.Model.CreatePredictionEngine<GameInfo, ESRBPrediction>(transformer: _model, inputSchema: _schema);
+            if (_predictor == null) throw new InvalidOperationException("You must train or load a model before predicting ESRB ratings");
 
             foreach (GameInfo game in games)
             {
-                ESRBPrediction prediction = predictEngine.Predict(game);
+                ESRBPrediction prediction = _predictor.Predict(game);
 
                 yield return new GameClassificationResult(prediction, game);
             }
@@ -116,6 +138,9 @@ namespace MattEland.AI.MLNet.ESRBPredictor.Core
         public void LoadModel(string filename)
         {
             _model = _context.Model.Load(filename, out _schema);
+
+            // Whenever our model changes, it's nice to update the prediction engine
+            _predictor = _context.Model.CreatePredictionEngine<GameInfo, ESRBPrediction>(transformer: _model, inputSchema: _schema);
         }
 
         /// <summary>

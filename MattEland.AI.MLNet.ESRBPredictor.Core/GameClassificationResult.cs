@@ -15,7 +15,6 @@
         public string Prediction => _prediction.ESRBRating;
         public float Confidence => _prediction.Confidence;
 
-
         public float EveryoneProbability => _prediction.Score[0];
         public float EveryoneTenPlusProbability => _prediction.Score[1];
         public float TeenProbability => _prediction.Score[3];

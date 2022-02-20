@@ -52,8 +52,8 @@ namespace MattEland.AI.MLNet.ESRBPredictor.ConsoleApp
                             IEnumerable<GameInfo> games = SampleGameDataSource.SampleGames;
                             foreach (GameClassificationResult result in predictor.ClassifyGames(games))
                             {
-                                string title = result.Game.Title;
-                                string rating = result.Prediction.ESRBRating;
+                                string title = result.Game;
+                                string rating = result.Prediction;
                                 
                                 Console.WriteLine($"Predicting rating of {rating} for \"{title}\"");
                                 Console.WriteLine($"\tDetails: {result}");
