@@ -10,9 +10,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MattEland.AI.MLNet.ESRBPredictor.Core", "MattEland.AI.MLNet.ESRBPredictor.Core\MattEland.AI.MLNet.ESRBPredictor.Core.csproj", "{D43D6E84-9393-42EB-BD0C-E783F6950D9B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MattEland.AI.MLNet.ESRBPredictor.Core", "MattEland.AI.MLNet.ESRBPredictor.Core\MattEland.AI.MLNet.ESRBPredictor.Core.csproj", "{D43D6E84-9393-42EB-BD0C-E783F6950D9B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MattEland.AI.MLNet.ESRBPredictor.SampleAPI", "MattEland.AI.MLNet.ESRBPredictor.SampleAPI\MattEland.AI.MLNet.ESRBPredictor.SampleAPI.csproj", "{27B0FBE4-D9BD-4616-AB85-4B1DF2EC4B64}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MattEland.AI.MLNet.ESRBPredictor.SampleAPI", "MattEland.AI.MLNet.ESRBPredictor.SampleAPI\MattEland.AI.MLNet.ESRBPredictor.SampleAPI.csproj", "{27B0FBE4-D9BD-4616-AB85-4B1DF2EC4B64}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MattEland.AI.MLNet.ESRBPredictor.TraditionalAPI", "MattEland.AI.MLNet.ESRBPredictor.TraditionalAPI\MattEland.AI.MLNet.ESRBPredictor.TraditionalAPI.csproj", "{77EB8748-4CFC-466F-9114-F35259AE230A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,6 +34,10 @@ Global
 		{27B0FBE4-D9BD-4616-AB85-4B1DF2EC4B64}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27B0FBE4-D9BD-4616-AB85-4B1DF2EC4B64}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{27B0FBE4-D9BD-4616-AB85-4B1DF2EC4B64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77EB8748-4CFC-466F-9114-F35259AE230A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77EB8748-4CFC-466F-9114-F35259AE230A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77EB8748-4CFC-466F-9114-F35259AE230A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77EB8748-4CFC-466F-9114-F35259AE230A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
