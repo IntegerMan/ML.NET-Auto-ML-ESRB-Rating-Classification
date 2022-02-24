@@ -67,29 +67,6 @@ namespace MattEland.AI.MLNet.ESRBPredictor.Core
             // Whenever our model changes, it's nice to update the prediction engine
             _predictor = _context.Model.CreatePredictionEngine<GameInfo, ESRBPrediction>(transformer: _model, inputSchema: _schema);
 
-            /* This code is the beginning of working with feature explainability, but is currently bugged for AutoML
-             * See https://github.com/dotnet/machinelearning/issues/6084 for bug details and current workaround status
-             * See https://docs.microsoft.com/en-us/dotnet/machine-learning/how-to-guides/explain-machine-learning-model-permutation-feature-importance-ml-net for more info on explainability
-
-            ImmutableDictionary<string, MulticlassClassificationMetricsStatistics>? permutationFeatureImportance =
-                _context
-                    .MulticlassClassification
-                    .PermutationFeatureImportance(_model, trainData, permutationCount: 3);
-
-            // The below is a draft that would work with regression, but needs to be adapted to multi-class classification
-
-            var featureImportanceMetrics = permutationFeatureImportance
-                        .Select((metric, index) => new { index, metric.RSquared })
-                        .OrderByDescending(myFeatures => Math.Abs(myFeatures.RSquared.Mean));
-
-                Console.WriteLine("Feature\tPFI");
-
-                foreach (var feature in featureImportanceMetrics)
-                {
-                    Console.WriteLine($"{featureColumnNames[feature.index],-20}|\t{feature.RSquared.Mean:F6}");
-                }
-            */
-
             // Return a formatted matrix tor analyzing model performance
             return result.BestRun;
         }
