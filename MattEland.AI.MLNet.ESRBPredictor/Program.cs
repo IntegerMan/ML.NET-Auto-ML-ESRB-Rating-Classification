@@ -9,7 +9,7 @@ namespace MattEland.AI.MLNet.ESRBPredictor.ConsoleApp
     {
         public static void Main()
         {
-            ESRBRatingPredictor predictor = new ESRBRatingPredictor();
+            ESRBRatingPredictor predictor = new();
             string modelFile = Path.Combine(Environment.CurrentDirectory, "Model.zip");
 
             bool shouldQuit = false;
@@ -49,16 +49,7 @@ namespace MattEland.AI.MLNet.ESRBPredictor.ConsoleApp
                             break;
 
                         case "P": // Predict ESRB ratings
-                            IEnumerable<GameInfo> games = SampleGameDataSource.SampleGames;
-                            foreach (GameClassificationResult result in predictor.ClassifyGames(games))
-                            {
-                                string title = result.Game;
-                                string rating = result.Prediction;
-                                
-                                Console.WriteLine($"Predicting rating of {rating} for \"{title}\"");
-                                Console.WriteLine($"\tDetails: {result}");
-                                Console.WriteLine();
-                            }
+                            PredictGameRatings(predictor);
                             break;
 
                         case "Q": // Quit
@@ -77,6 +68,20 @@ namespace MattEland.AI.MLNet.ESRBPredictor.ConsoleApp
                 }
             } while (!shouldQuit);
 
+        }
+
+        private static void PredictGameRatings(ESRBRatingPredictor predictor)
+        {
+            IEnumerable<GameInfo> games = SampleGameDataSource.SampleGames;
+            foreach (GameClassificationResult result in predictor.ClassifyGames(games))
+            {
+                string title = result.Game;
+                string rating = result.Prediction;
+
+                Console.WriteLine($"Predicting rating of {rating} for \"{title}\"");
+                Console.WriteLine($"\tDetails: {result}");
+                Console.WriteLine();
+            }
         }
 
         private static void HandleTrainModel(ESRBRatingPredictor predictor)

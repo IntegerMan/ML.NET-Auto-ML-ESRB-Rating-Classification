@@ -1,6 +1,4 @@
-﻿using System.Collections.Immutable;
-using System.Text;
-using Microsoft.ML;
+﻿using Microsoft.ML;
 using Microsoft.ML.AutoML;
 using Microsoft.ML.Data;
 
@@ -16,7 +14,7 @@ namespace MattEland.AI.MLNet.ESRBPredictor.Core
 
         private ITransformer? _model;
         private DataViewSchema? _schema;
-        private PredictionEngine<GameInfo, ESRBPrediction> _predictor;
+        private PredictionEngine<GameInfo, ESRBPrediction>? _predictor;
 
         /// <summary>
         /// Trains a machine learning model based on ESRB game data in the <paramref name="trainFilePath"/> and <paramref name="validationFilePath"/>.
@@ -29,9 +27,13 @@ namespace MattEland.AI.MLNet.ESRBPredictor.Core
         /// <param name="validationFilePath">The file containing the comma separated values for model validation</param>
         /// <param name="secondsToTrain">The number of seconds to spend training the machine learning model</param>
         /// <returns>Information about the best model</returns>
-        public RunDetail<MulticlassClassificationMetrics> TrainModel(string trainFilePath, string validationFilePath, uint secondsToTrain)
+        public RunDetail<MulticlassClassificationMetrics> TrainModel(
+            string trainFilePath, 
+            string validationFilePath, 
+            uint secondsToTrain)
         {
-            // Load data. This was built around the Kaggle dataset at https://www.kaggle.com/imohtn/video-games-rating-by-esrb
+            // Load training and test data.
+            // See Kaggle dataset at https://www.kaggle.com/imohtn/video-games-rating-by-esrb
             IDataView trainData = _context.Data.LoadFromTextFile<GameInfo>(
                 path: trainFilePath,
                 separatorChar: ',',
@@ -44,31 +46,60 @@ namespace MattEland.AI.MLNet.ESRBPredictor.Core
                 hasHeader: true, 
                 allowQuoting: true);
 
+
+
+            // NOTE: If you don't have two separate files you can split an IDataView
+            // using _context.Data.TrainTestSplit() and specify split parameters
+
+
+
+
+
             // Configure the experiment
             MulticlassExperimentSettings settings = new()
             {
-                OptimizingMetric = MulticlassClassificationMetric.LogLoss,
+                OptimizingMetric = MulticlassClassificationMetric.MacroAccuracy,
                 MaxExperimentTimeInSeconds = secondsToTrain,
             };
 
-            MulticlassClassificationExperiment experiment = _context.Auto().CreateMulticlassClassificationExperiment(settings);
+            MulticlassClassificationExperiment experiment = 
+                _context.Auto().CreateMulticlassClassificationExperiment(settings);
+
+
+
+
+
+
 
             // Actually Train the model
-            ExperimentResult<MulticlassClassificationMetrics> result = experiment.Execute(
-                trainData: trainData,
-                validationData: validationData,
-                labelColumnName: nameof(GameInfo.ESRBRating),
-                progressHandler: new MulticlassConsoleProgressReporter());
+            ExperimentResult<MulticlassClassificationMetrics> result = 
+                experiment.Execute(
+                    trainData: trainData,
+                    validationData: validationData,
+                    labelColumnName: nameof(GameInfo.ESRBRating),
+                    progressHandler: new MulticlassConsoleProgressReporter());
 
             // Process our finished result
             _model = result.BestRun.Model;
             _schema = trainData.Schema;
 
-            // Whenever our model changes, it's nice to update the prediction engine
-            _predictor = _context.Model.CreatePredictionEngine<GameInfo, ESRBPrediction>(transformer: _model, inputSchema: _schema);
 
-            // Return a formatted matrix tor analyzing model performance
+
+            // Return the best-performing model. This will include performance metrics
             return result.BestRun;
+        }
+
+        /// <summary>
+        /// Validates that a trained model exists and creates a PredictionEngine as needed
+        /// </summary>
+        /// <exception cref="InvalidOperationException">
+        /// Thrown if no model has been trained
+        /// </exception>
+        private void EnsurePredictorExists()
+        {
+            if (_model == null) throw new InvalidOperationException("You must train or load a model before predicting ESRB ratings");
+
+            _predictor ??= _context.Model.CreatePredictionEngine<GameInfo, ESRBPrediction>(transformer: _model, inputSchema: _schema);
         }
 
         /// <summary>
@@ -81,9 +112,9 @@ namespace MattEland.AI.MLNet.ESRBPredictor.Core
         /// </exception>
         public GameClassificationResult ClassifyGame(GameInfo game)
         {
-            if (_predictor == null) throw new InvalidOperationException("You must train or load a model before predicting ESRB ratings");
+            EnsurePredictorExists();
 
-            ESRBPrediction prediction = _predictor.Predict(game);
+            ESRBPrediction prediction = _predictor!.Predict(game);
 
             return new GameClassificationResult(prediction, game);
         }
@@ -98,26 +129,14 @@ namespace MattEland.AI.MLNet.ESRBPredictor.Core
         /// </exception>
         public IEnumerable<GameClassificationResult> ClassifyGames(IEnumerable<GameInfo> games)
         {
-            if (_predictor == null) throw new InvalidOperationException("You must train or load a model before predicting ESRB ratings");
+            EnsurePredictorExists();
 
             foreach (GameInfo game in games)
             {
-                ESRBPrediction prediction = _predictor.Predict(game);
+                ESRBPrediction prediction = _predictor!.Predict(game);
 
                 yield return new GameClassificationResult(prediction, game);
             }
-        }
-
-        /// <summary>
-        /// Loads the model from disk
-        /// </summary>
-        /// <param name="filename">The path of the model file to load</param>
-        public void LoadModel(string filename)
-        {
-            _model = _context.Model.Load(filename, out _schema);
-
-            // Whenever our model changes, it's nice to update the prediction engine
-            _predictor = _context.Model.CreatePredictionEngine<GameInfo, ESRBPrediction>(transformer: _model, inputSchema: _schema);
         }
 
         /// <summary>
@@ -133,5 +152,18 @@ namespace MattEland.AI.MLNet.ESRBPredictor.Core
 
             _context.Model.Save(_model, _schema, filename);
         }
+
+        /// <summary>
+        /// Loads the model from disk
+        /// </summary>
+        /// <param name="filename">The path of the model file to load</param>
+        public void LoadModel(string filename)
+        {
+            _model = _context.Model.Load(filename, out _schema);
+
+            // Whenever our model changes, it's nice to update the prediction engine
+            _predictor = _context.Model.CreatePredictionEngine<GameInfo, ESRBPrediction>(transformer: _model, inputSchema: _schema);
+        }
+
     }
 }
