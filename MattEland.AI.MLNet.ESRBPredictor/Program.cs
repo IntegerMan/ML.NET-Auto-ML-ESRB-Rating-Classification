@@ -9,7 +9,7 @@ namespace MattEland.AI.MLNet.ESRBPredictor.ConsoleApp
     {
         public static void Main()
         {
-            ESRBRatingPredictor predictor = new();
+            Core.ESRBPredictor predictor = new();
             string modelFile = Path.Combine(Environment.CurrentDirectory, "Model.zip");
 
             bool shouldQuit = false;
@@ -70,21 +70,23 @@ namespace MattEland.AI.MLNet.ESRBPredictor.ConsoleApp
 
         }
 
-        private static void PredictGameRatings(ESRBRatingPredictor predictor)
+        private static void PredictGameRatings(Core.ESRBPredictor predictor)
         {
-            IEnumerable<GameInfo> games = SampleGameDataSource.SampleGames;
-            foreach (GameClassificationResult result in predictor.ClassifyGames(games))
-            {
-                string title = result.Game;
-                string rating = result.Prediction;
+            List<GameInfo> games = SampleGameDataSource.SampleGames.ToList();
 
-                Console.WriteLine($"Predicting rating of {rating} for \"{title}\"");
+            // TODO: Add any custom games for demo purposes here
+
+            foreach (GameInfo game in games)
+            {
+                ESRBPrediction result = predictor.Predict(game);
+
+                Console.WriteLine($"Predicting rating of {result.ESRBRating} for \"{game.Title}\"");
                 Console.WriteLine($"\tDetails: {result}");
                 Console.WriteLine();
             }
         }
 
-        private static void HandleTrainModel(ESRBRatingPredictor predictor)
+        private static void HandleTrainModel(Core.ESRBPredictor predictor)
         {
             uint secondsToTrain = PromptForSecondsToTrain();
 
@@ -102,7 +104,7 @@ namespace MattEland.AI.MLNet.ESRBPredictor.ConsoleApp
             Console.WriteLine(bestRun.ValidationMetrics.ConfusionMatrix.GetFormattedConfusionTable());
         }
 
-        private static void HandleSaveModel(ESRBRatingPredictor predictor, string modelFile)
+        private static void HandleSaveModel(Core.ESRBPredictor predictor, string modelFile)
         {
             try
             {
@@ -116,7 +118,7 @@ namespace MattEland.AI.MLNet.ESRBPredictor.ConsoleApp
             }
         }
 
-        private static void HandleLoadModel(ESRBRatingPredictor predictor, string modelFile)
+        private static void HandleLoadModel(Core.ESRBPredictor predictor, string modelFile)
         {
             try
             {

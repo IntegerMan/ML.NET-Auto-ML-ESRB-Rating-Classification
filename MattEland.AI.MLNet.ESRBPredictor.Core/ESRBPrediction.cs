@@ -7,8 +7,7 @@ namespace MattEland.AI.MLNet.ESRBPredictor.Core
         [ColumnName("PredictedLabel")]
         public string ESRBRating { get; set; }
 
+        [ColumnName("Score")]
         public float[] Score { get; set; }
-
-        public float Confidence => Score.Max();
     }
 }

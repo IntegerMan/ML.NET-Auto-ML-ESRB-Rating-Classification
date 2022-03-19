@@ -7,17 +7,17 @@ namespace MattEland.AI.MLNet.ESRBPredictor.TraditionalAPI.Controllers
     [Route("[controller]")]
     public class GameRatingController : ControllerBase
     {
-        private readonly ESRBRatingPredictor _predictor;
+        private readonly Core.ESRBPredictor _predictor;
 
-        public GameRatingController(ESRBRatingPredictor predictor)
+        public GameRatingController(Core.ESRBPredictor predictor)
         {
             _predictor = predictor;
         }
 
         [HttpPost]
-        public ActionResult<GameClassificationResult> Evaluate(GameInfo game)
+        public ActionResult<ESRBPrediction> Evaluate(GameInfo game)
         {
-            GameClassificationResult result = _predictor.ClassifyGame(game);
+            ESRBPrediction result = _predictor.Predict(game);
 
             return Ok(result);
         }

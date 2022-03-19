@@ -14,7 +14,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MattEland.AI.MLNet.ESRBPred
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MattEland.AI.MLNet.ESRBPredictor.SampleAPI", "MattEland.AI.MLNet.ESRBPredictor.SampleAPI\MattEland.AI.MLNet.ESRBPredictor.SampleAPI.csproj", "{27B0FBE4-D9BD-4616-AB85-4B1DF2EC4B64}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MattEland.AI.MLNet.ESRBPredictor.TraditionalAPI", "MattEland.AI.MLNet.ESRBPredictor.TraditionalAPI\MattEland.AI.MLNet.ESRBPredictor.TraditionalAPI.csproj", "{77EB8748-4CFC-466F-9114-F35259AE230A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MattEland.AI.MLNet.ESRBPredictor.TraditionalAPI", "MattEland.AI.MLNet.ESRBPredictor.TraditionalAPI\MattEland.AI.MLNet.ESRBPredictor.TraditionalAPI.csproj", "{77EB8748-4CFC-466F-9114-F35259AE230A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MattEland.AI.MLNet.Wrapper", "MattEland.AI.MLNet.Wrapper\MattEland.AI.MLNet.Wrapper.csproj", "{C8AB4D15-C654-4BB5-8D2D-067F206A2C11}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,6 +40,10 @@ Global
 		{77EB8748-4CFC-466F-9114-F35259AE230A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77EB8748-4CFC-466F-9114-F35259AE230A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77EB8748-4CFC-466F-9114-F35259AE230A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8AB4D15-C654-4BB5-8D2D-067F206A2C11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8AB4D15-C654-4BB5-8D2D-067F206A2C11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8AB4D15-C654-4BB5-8D2D-067F206A2C11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8AB4D15-C654-4BB5-8D2D-067F206A2C11}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -10,11 +10,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Create the globally-used ESRB Predictor and load the trained model into it
-ESRBRatingPredictor predictor = new();
+ESRBPredictor predictor = new();
 predictor.LoadModel("Model.zip");
 
-// Whenever a controller needs an ESRBRatingPredictor, give it this instance
-builder.Services.AddSingleton<ESRBRatingPredictor>(predictor);
+// Whenever a controller needs an ESRBPredictor, give it this instance
+builder.Services.AddSingleton<ESRBPredictor>(predictor);
 
 
 var app = builder.Build();

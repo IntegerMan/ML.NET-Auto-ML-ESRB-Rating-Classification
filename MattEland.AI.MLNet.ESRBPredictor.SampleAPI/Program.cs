@@ -17,11 +17,11 @@ app.UseHttpsRedirection();
 #endregion
 
 // Application Startup Code
-ESRBRatingPredictor predictor = new ESRBRatingPredictor();
+ESRBPredictor predictor = new ESRBPredictor();
 predictor.LoadModel("Model.zip");
 
 // Endpoint Mapping
-app.MapPost("/esrb-predictor", (GameInfo game) => Results.Ok(predictor.ClassifyGame(game)));
+app.MapPost("/esrb-predictor", (GameInfo game) => Results.Ok(predictor.Predict(game)));
 
 // Start the Web Application
 app.Run();
