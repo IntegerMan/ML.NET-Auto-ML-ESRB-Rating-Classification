@@ -7,7 +7,7 @@ public class ESRBPrediction
     [ColumnName("PredictedLabel")]
     public string ESRBRating { get; set; }
 
-    public float[] Score { get; set; }
+    public float[] Score { get; set; } // [ P:E, P:ET, P:M, P:T]
 
     public float Confidence => Score.Max();
 

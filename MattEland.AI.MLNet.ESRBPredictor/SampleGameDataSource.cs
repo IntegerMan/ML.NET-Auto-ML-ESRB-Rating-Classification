@@ -10,6 +10,14 @@ public static class SampleGameDataSource
         {
             yield return new GameInfo()
             {
+                Title = "Pizza-rama CONDG Edition",
+                Language = true,
+                Console = true,
+                AlcoholReference = true,
+                UseOfAlcohol = false,
+            };
+            yield return new GameInfo()
+            {
                 Title = "Teen Side Scroller",
                 CartoonViolence = true,
                 MildLanguage = true,

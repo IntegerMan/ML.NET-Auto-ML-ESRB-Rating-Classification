@@ -58,7 +58,8 @@ public class ESRBRatingPredictor
 
 
         // Split our data into two parts - one for training and one for verification
-        DataOperationsCatalog.TrainTestData trainTestSplit = _context.Data.TrainTestSplit(data, testFraction: 0.2);
+        DataOperationsCatalog.TrainTestData trainTestSplit = 
+            _context.Data.TrainTestSplit(data, testFraction: 0.3);
 
 
 
